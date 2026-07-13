@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
-from beautifulsoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 
 # ---------------------------------------------------------
 # Pferdenamen aus dem <title> extrahieren
