@@ -237,7 +237,7 @@ def extract_competition_data(url):
 # ---------------------------------------------------------
 # Streamlit UI
 # ---------------------------------------------------------
-st.title("Rocky's Pferderennen")
+st.title("Hengste vs Stuten - das große Pferderennen!")
 
 
 
