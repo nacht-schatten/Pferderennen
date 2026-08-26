@@ -244,8 +244,8 @@ def extract_competition_data(url):
 # ---------------------------------------------------------
 # Streamlit UI
 # ---------------------------------------------------------
-st.title("- Das Große Pferderennen! -"
-    \n"🌀Hengste vs 🌸Stuten")
+st.title("- Das Große Pferderennen! -")
+st.header("🌀Hengste vs 🌸Stuten")
 
 
 
