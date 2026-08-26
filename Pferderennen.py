@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 st.set_page_config(
     page_title="Pferderennen",
-    page_icon="🐴",
+    page_icon="🏇",
     layout="centered",
     
 )
@@ -639,6 +639,7 @@ if all_data:
        
         
         #Pferdekarten:
+        st.subheader("Die Rennpferde")
 
         for horse_id, row in totals_per_horse.iterrows():
             
@@ -660,13 +661,13 @@ if all_data:
 
             st.markdown(
                 f"""
-                <h2 style="
+                <h4 style="
                     background-color:{card_color};
                     padding:10px;
                     border-radius:10px;
                 ">
                     {horse_name}
-                </h2>
+                </h4>
                 """,
                 unsafe_allow_html=True
             )
