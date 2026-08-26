@@ -244,7 +244,7 @@ def extract_competition_data(url):
 # ---------------------------------------------------------
 # Streamlit UI
 # ---------------------------------------------------------
-st.title("Hengste vs Stuten - das große Pferderennen!")
+st.title("🌀Hengste vs 🌸Stuten - das große Pferderennen!🏇")
 
 
 
@@ -533,7 +533,7 @@ if all_data:
 
         
 
-        st.subheader("🔵 Hengste")
+        st.subheader("🌀 Hengste")
 
         chart = build_chart_geteilt(hengste_data)
         html = chart.to_html(embed_options={"renderer": "svg"})
@@ -619,7 +619,7 @@ if all_data:
 
         with col1:
             st.metric(
-                "🔵 Hengste",
+                "🌀 Hengste",
                 f"{hengste_punkte:,} Punkte"
             )
 
@@ -631,7 +631,7 @@ if all_data:
 
 
         if hengste_punkte > stuten_punkte:
-            st.success("🔵 Die Hengste liegen vorne!")
+            st.success("🌀 Die Hengste liegen vorne!")
         elif stuten_punkte > hengste_punkte:
             st.success("🌸 Die Stuten liegen vorne!")
         else:
