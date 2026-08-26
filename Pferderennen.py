@@ -332,8 +332,8 @@ if all_data:
         totals_per_horse["punkte"] = (
             totals_per_horse["schleifen"] * 50 +
             totals_per_horse["gold"] * 10 +
-            totals_per_horse["silber"] * 0 +
-            totals_per_horse["bronze"] * 0
+            totals_per_horse["silber"] * 5 +
+            totals_per_horse["bronze"] * 1
             )
        
         
