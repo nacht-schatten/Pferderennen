@@ -3,6 +3,13 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+st.set_page_config(
+    page_title="Pferderennen",
+    page_icon="🐴",
+    layout="centered",
+    
+)
+
 # ---------------------------------------------------------
 # Pferdenamen aus dem <title> extrahieren
 # ---------------------------------------------------------
