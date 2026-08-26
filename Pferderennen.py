@@ -529,7 +529,7 @@ if all_data:
         components.html(
             html,
             height=60 * len(all_chart_data) + 100,
-            scrolling=False
+            scrolling=True
         )
 
         
@@ -542,7 +542,7 @@ if all_data:
         components.html(
             html,
             height=25 * len(all_chart_data) + 100,
-            scrolling=False
+            scrolling=True
         )
 
         
@@ -555,7 +555,7 @@ if all_data:
         components.html(
             html,
             height=25 * len(all_chart_data) + 100,
-            scrolling=False
+            scrolling=True
         )
 
         
