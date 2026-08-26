@@ -164,8 +164,7 @@ def extract_competition_data(url):
 
    # Pferdebild extrahieren
 
-# 1. Versuch: normales PNG-Bild
-    # Pferdebild extrahieren
+
 
 # 1. Versuch: normales PNG-Bild
     horse_image = get_horse_image(soup)
@@ -181,6 +180,22 @@ def extract_competition_data(url):
             owner_name = None
     else:
         owner_name = None
+        
+    # Geschlecht ermitteln
+
+    geschlecht = None
+
+    match = re.search(r"var chevalSexe\s*=\s*'(masculin|feminin)'", r.text)
+
+    if match:
+        geschlecht = match.group(1)
+    else:
+        text = soup.get_text(" ", strip=True)
+
+        if "Geschlecht: männlich" in text:
+            geschlecht = "masculin"
+        elif "Geschlecht: weiblich" in text:
+            geschlecht = "feminin"
 
 
     data = []
@@ -210,7 +225,8 @@ def extract_competition_data(url):
                 "silber": numbers[2],
                 "bronze": numbers[3],
                 "image": horse_image,
-                "owner": owner_name
+                "owner": owner_name,
+                "geschlecht": geschlecht
 
             })
 
@@ -231,6 +247,12 @@ urls = ["https://www.howrse.de/elevage/fiche/?id=106862838",
         "https://www.howrse.de/elevage/fiche/?id=108115577",
         "https://www.howrse.de/elevage/fiche/?id=108180445",
         "https://www.howrse.de/elevage/fiche/?id=107497259",
+        "https://www.howrse.de/elevage/fiche/?id=105749136",
+        "https://www.howrse.de/elevage/fiche/?id=106238423",
+        #"https://www.howrse.de/elevage/fiche/?id=104820933",
+        #"https://www.howrse.de/elevage/fiche/?id=104820934",
+        #"https://www.howrse.de/elevage/fiche/?id=104820941",
+        #"https://www.howrse.de/elevage/fiche/?id=104820942"
         #"https://www.howrse.de/elevage/fiche/?id=99501547"
         ]
 
@@ -247,7 +269,8 @@ if all_data:
         horse_info = df.groupby("horse_id").agg({
             "pferd": "first",
             "image": "first",
-            "owner": "first"
+            "owner": "first",
+            "geschlecht": "first"
         }).reset_index()
 
                 
@@ -350,6 +373,8 @@ if all_data:
            on="horse_id",
            how="left"
         )
+        
+        
 
         chart_data["unique"] = chart_data["horse_id"]
         chart_data["label"] = chart_data["pferd"]
@@ -361,98 +386,275 @@ if all_data:
         chart_data["bar_x"] = chart_data["punkte"]
         chart_data["text_x"] = chart_data["punkte"].max() * 0.02
         chart_data["icon_x"] = chart_data["punkte"]
+        chart_data["farbe"] = chart_data["geschlecht"].map({
+                "masculin": "#b9d9ff",  # zart blau
+                    "feminin": "#ffd6e8"    # zart rosa
+        })
+        
+        all_chart_data = chart_data.copy()
+
+        hengste_data = chart_data[
+            chart_data["geschlecht"] == "masculin"
+        ].copy()
+
+        stuten_data = chart_data[
+            chart_data["geschlecht"] == "feminin"
+        ].copy()
         
 
-
+        def build_chart(data):
 # Unsichtbare Y-Achse
-        y_axis = alt.Y(
-            "unique:N",
-            sort=alt.SortField(field="punkte"),
-            axis=None
-        )
+            y_axis = alt.Y(
+                "unique:N",
+                #sort=alt.SortField(field="punkte"),
+                axis=None
+            )
         
-        max_punkte = chart_data["punkte"].max()
-        x_max = max_punkte * 1.05
+            max_punkte = data["punkte"].max()
+            x_max = max_punkte * 1.05
 
 # Balken
-        bar = alt.Chart(chart_data).mark_bar(
-            color="#e7f9e4"
-        ).encode(
-            x=alt.X("bar_x:Q", title="Punkte",  scale=alt.Scale(domain=[0, x_max])),
-            y=y_axis,
-        )
+            bar = alt.Chart(data).mark_bar().encode(
+                x=alt.X("bar_x:Q", title="Punkte",
+                    scale=alt.Scale(domain=[0, x_max])),
+                y=y_axis,
+                color=alt.Color(
+                    "geschlecht:N",
+                    scale=alt.Scale(
+                        domain=["masculin", "feminin"],
+                        range=["#b9d9ff", "#ffd6e8"]
+                    ),
+                    legend=None
+                )
+            )
 
 # Text (eigene X-Achse, links vom Balken)
-        text = alt.Chart(chart_data).mark_text(
-            align="left",
-            baseline="middle",
-            dx=-5,
-            color="#20ad4e",
-            fontSize=14
-        ).encode(
-            x="text_x:Q",
-            y=y_axis,
-            text="label:N"
-        )           
+            text = alt.Chart(data).mark_text(
+                align="left",
+                baseline="middle",
+                dx=-5,
+                color="#20ad4e",
+                fontSize=14
+            ).encode(
+                x="text_x:Q",
+                y=y_axis,
+                text="label:N"
+            )           
 
 # Icons (eigene X-Achse)
-        icons = alt.Chart(chart_data).mark_image(
-            width=40,
-            height=40
-        ).encode(
-            x="icon_x:Q",
-            y=y_axis,
-            url="image:N",
-            tooltip=["pferd:N", "punkte:Q"]
-        )
+            icons = alt.Chart(data).mark_image(
+                width=40,
+                height=40
+            ).encode(
+                x="icon_x:Q",
+                y=y_axis,
+                url="image:N",
+                tooltip=["pferd:N", "punkte:Q"]
+            )
 
         
 
 
 
 
-        chart = (bar + text + icons).properties(
-            width=700,
-            height=60 * len(chart_data)
-        ).configure_view(
-            stroke=None,
-            clip=False
-        )
+            chart = (bar + text + icons).properties(
+                width=700,
+                height=60 * len(chart_data)
+            ).configure_view(
+                stroke=None,
+                clip=False
+            )
 
+            
+            
+            return chart
+        
+        def build_chart_geteilt(data):
+# Unsichtbare Y-Achse
+            y_axis = alt.Y(
+                "unique:N",
+                #sort=alt.SortField(field="punkte"),
+                axis=None
+            )
+        
+            max_punkte = data["punkte"].max()
+            x_max = max_punkte * 1.05
+
+# Balken
+            bar = alt.Chart(data).mark_bar().encode(
+                x=alt.X("bar_x:Q", title="Punkte",
+                    scale=alt.Scale(domain=[0, x_max])),
+                y=y_axis,
+                color=alt.Color(
+                    "geschlecht:N",
+                    scale=alt.Scale(
+                        domain=["masculin", "feminin"],
+                        range=["#b9d9ff", "#ffd6e8"]
+                    ),
+                    legend=None
+                )
+            )
+
+# Text (eigene X-Achse, links vom Balken)
+            text = alt.Chart(data).mark_text(
+                align="left",
+                baseline="middle",
+                dx=-5,
+                color="#20ad4e",
+                fontSize=14
+            ).encode(
+                x="text_x:Q",
+                y=y_axis,
+                text="label:N"
+            )           
+
+# Icons (eigene X-Achse)
+            icons = alt.Chart(data).mark_image(
+                width=40,
+                height=40
+            ).encode(
+                x="icon_x:Q",
+                y=y_axis,
+                url="image:N",
+                tooltip=["pferd:N", "punkte:Q"]
+            )
+
+        
+
+
+
+
+            chart = (bar + text + icons).properties(
+                width=700,
+                height=25 * len(chart_data)
+            ).configure_view(
+                stroke=None,
+                clip=False
+            )
+
+            
+            
+            return chart
+
+
+        st.subheader("🏇 Gesamtrennen")
+
+        chart = build_chart(all_chart_data)
         html = chart.to_html(embed_options={"renderer": "svg"})
 
-        
+    
 
         components.html(
             html,
-            height=60 * len(chart_data) + 100,
+            height=60 * len(all_chart_data) + 100,
             scrolling=False
         )
 
+        
+
+        st.subheader("🔵 Hengste")
+
+        chart = build_chart_geteilt(hengste_data)
+        html = chart.to_html(embed_options={"renderer": "svg"})
+        
+        components.html(
+            html,
+            height=25 * len(all_chart_data) + 100,
+            scrolling=False
+        )
+
+        
+
+        st.subheader("🌸 Stuten")
+
+        chart = build_chart_geteilt(stuten_data)
+        html = chart.to_html(embed_options={"renderer": "svg"})
+        
+        components.html(
+            html,
+            height=25 * len(all_chart_data) + 100,
+            scrolling=False
+        )
+
+        
 
 
 
-
-
-
-
-        st.subheader("Gesamtübersicht pro Pferd (alle Disziplinen)")
+        st.subheader("Leaderboard")
         overview = totals_per_horse_sorted.reset_index().merge(
             horse_info,
             on="horse_id",
             how="left"
         )
         
+        
+        def color_rows(row):
+            geschlecht = overview.loc[row.name, "geschlecht"]
 
+            if geschlecht == "masculin":
+                return ["background-color: #b9d9ff"] * len(row)
+            elif geschlecht == "feminin":
+                return ["background-color: #ffd6e8"] * len(row)
+            else:
+                return ["background-color: #ffffff"] * len(row)
+        
         overview = overview.reset_index(drop=True)
         overview.index = overview.index + 1
+        
+        styled_overview = (
+            overview[
+                [
+                    "pferd",
+                    #"geschlecht",
+                    "schleifen",
+                    "gold",
+                    "silber",
+                    "bronze",
+                    "punkte"
+                ]
+            ]
+            .style
+            .apply(color_rows, axis=1)
+            
+        )
 
-        st.dataframe(overview[["pferd", "schleifen", "gold", "silber", "bronze", "punkte"]])
 
 
         
-        
 
+        st.dataframe(styled_overview)
+
+
+        gruppenwertung = chart_data.groupby(
+            "geschlecht"
+        )["punkte"].sum()
+        
+        hengste_punkte = gruppenwertung.get("masculin", 0)
+        stuten_punkte = gruppenwertung.get("feminin", 0)
+
+        st.subheader("🏆 Hengste vs Stuten")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "🔵 Hengste",
+                f"{hengste_punkte:,} Punkte"
+            )
+
+        with col2:
+            st.metric(
+                "🌸 Stuten",
+                f"{stuten_punkte:,} Punkte"
+            )
+
+
+        if hengste_punkte > stuten_punkte:
+            st.success("🔵 Die Hengste liegen vorne!")
+        elif stuten_punkte > hengste_punkte:
+            st.success("🌸 Die Stuten liegen vorne!")
+        else:
+            st.info("🤝 Unentschieden!")
        
         
         #Pferdekarten:
@@ -460,12 +662,35 @@ if all_data:
         for horse_id, row in totals_per_horse.iterrows():
             
             horse_name = df[df["horse_id"] == horse_id]["pferd"].iloc[0]
+            geschlecht = df[df["horse_id"] == horse_id]["geschlecht"].iloc[0]
             owner_name = df[df["horse_id"] == horse_id]["owner"].iloc[0]
             img_url = df[df["horse_id"] == horse_id]["image"].dropna().iloc[0]
+            
+            
+            if geschlecht == "masculin":
+                card_color = "#b9d9ff"
+            elif geschlecht == "feminin":
+                card_color = "#ffd6e8"
+            else:
+                card_color = "#ffffff"
+            
+            
 
-            st.write(f"## {horse_name}")
 
-            st.write(f"**Besitzer:** {owner_name}")
+            st.markdown(
+                f"""
+                <h2 style="
+                    background-color:{card_color};
+                    padding:10px;
+                    border-radius:10px;
+                ">
+                    {horse_name}
+                </h2>
+                """,
+                unsafe_allow_html=True
+            )
+
+            st.write(f"**Besitzer*in:** {owner_name}")
             
 
 
@@ -483,11 +708,22 @@ if all_data:
     # Stats anzeigen
             with col2:
                 
-                st.markdown(f"**Schleifen:** {row['schleifen']}")
-                st.markdown(f"**Gold:** {row['gold']}")
-                st.markdown(f"**Silber:** {row['silber']}")
-                st.markdown(f"**Bronze:** {row['bronze']}")
-                st.markdown(f"**Punkte:** {row['punkte']}")
+                st.markdown(
+                    f"""
+                    <div style="
+                        background-color:{card_color};
+                        padding:10px;
+                        border-radius:10px;
+                    ">
+                        <b>Schleifen:</b> {row['schleifen']}<br>
+                        <b>Gold:</b> {row['gold']}<br>
+                        <b>Silber:</b> {row['silber']}<br>
+                        <b>Bronze:</b> {row['bronze']}<br>
+                        <b>Punkte:</b> {row['punkte']}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
                 
     
         #st.bar_chart(ranking_points)
