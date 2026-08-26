@@ -244,7 +244,7 @@ def extract_competition_data(url):
 # ---------------------------------------------------------
 # Streamlit UI
 # ---------------------------------------------------------
-st.title("- Das Große Pferderennen! -")
+st.title("Das Große Pferderennen!")
 st.header("🌀Hengste vs 🌸Stuten")
 
 
@@ -425,8 +425,8 @@ if all_data:
 
 # Icons (eigene X-Achse)
             icons = alt.Chart(data).mark_image(
-                width=40,
-                height=40
+                width=50,
+                height=50
             ).encode(
                 x="icon_x:Q",
                 y=y_axis,
@@ -492,8 +492,8 @@ if all_data:
 
 # Icons (eigene X-Achse)
             icons = alt.Chart(data).mark_image(
-                width=40,
-                height=40
+                width=50,
+                height=50
             ).encode(
                 x="icon_x:Q",
                 y=y_axis,
