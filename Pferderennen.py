@@ -339,33 +339,7 @@ if all_data:
 
         
        
-        # Top 3 nach Punkten
-        top3 = ranking_points.head(3)
-
-        if len(top3) >= 3:
-            p1_id, p2_id, p3_id = top3.index[0], top3.index[1], top3.index[2]
-
-            p1 = horse_info.loc[horse_info["horse_id"] == p1_id, "pferd"].iloc[0]
-            p2 = horse_info.loc[horse_info["horse_id"] == p2_id, "pferd"].iloc[0]
-            p3 = horse_info.loc[horse_info["horse_id"] == p3_id, "pferd"].iloc[0]
-
-            v1, v2, v3 = top3.iloc[0], top3.iloc[1], top3.iloc[2]
-
-            col1, col2, col3 = st.columns([1, 1, 1])
-
-            with col2:
-                st.write(f"#### 🥇 {p1}")
-                st.write(f"**{v1} Punkte**")
-
-            with col1:
-                st.write(f"#### 🥈 {p2}")
-                st.write(f"**{v2} Punkte**")
-
-            with col3:
-                st.write(f"#### 🥉 {p3}")
-                st.write(f"**{v3} Punkte**")
-        else:
-            st.info("Für ein Podest werden mindestens 3 Pferde benötigt.")
+    
         
             # Ranking-Daten vorbereiten
         chart_data = totals_per_horse_sorted.reset_index().merge(
