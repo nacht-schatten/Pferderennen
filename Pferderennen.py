@@ -440,7 +440,7 @@ if all_data:
 
 
             chart = (bar + text + icons).properties(
-                width=700,
+                width=650,
                 height=60 * len(chart_data)
             ).configure_view(
                 stroke=None,
@@ -507,7 +507,7 @@ if all_data:
 
 
             chart = (bar + text + icons).properties(
-                width=700,
+                width=650,
                 height=25 * len(chart_data)
             ).configure_view(
                 stroke=None,
