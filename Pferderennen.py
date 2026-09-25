@@ -251,7 +251,7 @@ st.header("🌀Hengste vs 🌸Stuten")
 
 all_data = []
 
-urls = ["https://www.howrse.de/elevage/fiche/?id=106862838",
+urls = ["https://www.howrse.de/elevage/fiche/?id=109411490",
         "https://www.howrse.de/elevage/fiche/?id=108115577",
         "https://www.howrse.de/elevage/fiche/?id=108180445",
         "https://www.howrse.de/elevage/fiche/?id=107497259",
