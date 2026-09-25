@@ -253,16 +253,7 @@ all_data = []
 
 urls = ["https://www.howrse.de/elevage/fiche/?id=109411490",
         "https://www.howrse.de/elevage/fiche/?id=109411520",
-        "https://www.howrse.de/elevage/fiche/?id=108180445",
-        "https://www.howrse.de/elevage/fiche/?id=107497259",
-        "https://www.howrse.de/elevage/fiche/?id=105749136",
-        "https://www.howrse.de/elevage/fiche/?id=106238423",
-        #"https://www.howrse.de/elevage/fiche/?id=104820933",
-        #"https://www.howrse.de/elevage/fiche/?id=104820934",
-        #"https://www.howrse.de/elevage/fiche/?id=104820941",
-        #"https://www.howrse.de/elevage/fiche/?id=104820942"
-        #"https://www.howrse.de/elevage/fiche/?id=99501547"
-        ]
+       ]
 
 for url in urls:
     try:
