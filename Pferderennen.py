@@ -256,7 +256,8 @@ urls = ["https://www.howrse.de/elevage/fiche/?id=109411490",
         "https://www.howrse.de/elevage/fiche/?id=109411491",
         "https://www.howrse.de/elevage/fiche/?id=109411510",
         "https://www.howrse.de/elevage/fiche/?id=109411472",
-        "https://www.howrse.de/elevage/fiche/?id=109411471"
+        "https://www.howrse.de/elevage/fiche/?id=109411471",
+        "https://www.howrse.de/elevage/fiche/?id=109411521"
        ]
 
 for url in urls:
